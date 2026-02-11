@@ -10,6 +10,13 @@ on:
       - "quartz.config.ts"
       - "quartz.layout.ts"
       - "quartz/**"
+  workflow_run:
+    workflows:
+      - "Daily Heartbeat"
+      - "Weekly Heartbeat"
+      - "Monthly Heartbeat"
+    types:
+      - completed
 
 permissions:
   contents: read
@@ -22,6 +29,9 @@ concurrency:
 
 jobs:
   build:
+    if: >-
+      github.event_name == 'push' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
