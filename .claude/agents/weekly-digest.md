@@ -73,7 +73,7 @@ voice and set `character: null` in frontmatter.
    date: {YYYY-MM-DD}  # Monday of the week
    week: {YYYY-WNN}
    template: default
-   character: null
+   character: null  # set to character name if --character was provided
    cadence: weekly
    dailies_consumed: [list of daily digest paths]
    sources:

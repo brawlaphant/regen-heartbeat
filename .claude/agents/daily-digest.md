@@ -72,7 +72,7 @@ voice and set `character: null` in frontmatter.
    title: "Daily Heartbeat — {date}"
    date: {YYYY-MM-DD}
    template: default
-   character: null
+   character: null  # set to character name if --character was provided
    cadence: daily
    sources:
      koi: true

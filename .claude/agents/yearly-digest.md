@@ -83,7 +83,7 @@ voice and set `character: null` in frontmatter.
    date: {YYYY-MM-DD}  # date of generation
    year: {YYYY}
    template: default
-   character: null
+   character: null  # set to character name if --character was provided
    cadence: yearly
    monthlies_consumed: [list of monthly digest paths]
    sources:

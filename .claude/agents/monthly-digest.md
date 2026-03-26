@@ -74,7 +74,7 @@ voice and set `character: null` in frontmatter.
    date: {YYYY-MM-DD}  # first day of the month
    month: {YYYY-MM}
    template: default
-   character: null
+   character: null  # set to character name if --character was provided
    cadence: monthly
    weeklies_consumed: [list of weekly digest paths]
    sources:
