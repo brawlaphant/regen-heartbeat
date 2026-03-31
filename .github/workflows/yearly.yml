@@ -103,4 +103,4 @@ jobs:
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
           git add content/digests/
           git diff --cached --quiet || \
-            (git commit -m "yearly: ${{ steps.year.outputs.target }}" && git push)
+            (git commit -m "yearly: ${{ steps.year.outputs.target }}" && git pull --rebase origin main && git push)
