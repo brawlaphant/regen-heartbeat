@@ -62,6 +62,19 @@ Follow those instructions exactly, with the following CI-specific adaptations:
    - Pose 5-7 defining questions for the next year
 
 6. Synthesize into a definitive yearly narrative.
+
+## Character Voice (Optional)
+
+If a character name was provided in the prompt above (the `Character:` field is
+non-empty), apply that character's voice to the entire digest:
+1. Load the character skill at `.claude/skills/{character}/SKILL.md`
+2. Follow the output style instructions referenced in that skill
+3. Set the `character` field in YAML frontmatter to the character name
+4. Maintain the character's voice consistently throughout all sections
+
+If no character was specified (empty string), use the default neutral observatory
+voice and set `character: null` in frontmatter.
+
 7. Write YAML frontmatter:
 
    ```yaml
@@ -70,7 +83,7 @@ Follow those instructions exactly, with the following CI-specific adaptations:
    date: {YYYY-MM-DD}  # date of generation
    year: {YYYY}
    template: default
-   character: null
+   character: null  # set to character name if --character was provided
    cadence: yearly
    monthlies_consumed: [list of monthly digest paths]
    sources:

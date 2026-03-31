@@ -11,12 +11,61 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Verify daily digest exists
+      - name: Verify daily digest
         run: |
           YESTERDAY=$(date -u -d yesterday +%Y/%m/%d)
-          if [ ! -f "content/digests/${YESTERDAY}/daily.md" ]; then
-            echo "::warning::Daily digest missing for ${YESTERDAY}"
+          FILE="content/digests/${YESTERDAY}/daily.md"
+          ERRORS=0
+
+          # 1. File exists
+          if [ ! -f "$FILE" ]; then
+            echo "::error::Daily digest missing for ${YESTERDAY}"
+            exit 1
+          fi
+          echo "✓ File exists: ${FILE}"
+
+          # 2. File is not empty
+          if [ ! -s "$FILE" ]; then
+            echo "::error::Daily digest is empty for ${YESTERDAY}"
+            ERRORS=$((ERRORS + 1))
           else
-            echo "Daily digest found for ${YESTERDAY}"
+            BYTES=$(wc -c < "$FILE")
+            echo "✓ File is non-empty (${BYTES} bytes)"
+          fi
+
+          # 3. Required frontmatter fields
+          for FIELD in title date cadence template; do
+            if ! grep -q "^${FIELD}:" "$FILE"; then
+              echo "::warning::Frontmatter missing field '${FIELD}' in ${YESTERDAY}/daily.md"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+          if [ $ERRORS -eq 0 ]; then
+            echo "✓ All required frontmatter fields present"
+          fi
+
+          # 4. File was committed within the expected window (not stale)
+          LAST_COMMIT_DATE=$(git log -1 --format="%ai" -- "$FILE" 2>/dev/null | cut -d' ' -f1)
+          if [ -z "$LAST_COMMIT_DATE" ]; then
+            echo "::warning::No git history found for ${FILE} — may be uncommitted"
+            ERRORS=$((ERRORS + 1))
+          else
+            YESTERDAY_DATE=$(date -u -d yesterday +%Y-%m-%d)
+            TODAY_DATE=$(date -u +%Y-%m-%d)
+            if [ "$LAST_COMMIT_DATE" != "$YESTERDAY_DATE" ] && [ "$LAST_COMMIT_DATE" != "$TODAY_DATE" ]; then
+              echo "::warning::Digest for ${YESTERDAY} was last committed on ${LAST_COMMIT_DATE} — may be stale"
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "✓ File committed recently (${LAST_COMMIT_DATE})"
+            fi
+          fi
+
+          # Summary
+          if [ $ERRORS -gt 0 ]; then
+            echo "::warning::Heartbeat check completed with ${ERRORS} warning(s)"
+          else
+            echo "Heartbeat OK — daily digest for ${YESTERDAY} is valid"
           fi

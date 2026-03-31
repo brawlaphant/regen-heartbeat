@@ -52,6 +52,19 @@ Follow those instructions exactly, with the following CI-specific adaptations:
    - Compare with the most recent 3–5 days
 
 5. Synthesize into a coherent digest following the template structure.
+
+## Character Voice (Optional)
+
+If a character name was provided in the prompt above (the `Character:` field is
+non-empty), apply that character's voice to the entire digest:
+1. Load the character skill at `.claude/skills/{character}/SKILL.md`
+2. Follow the output style instructions referenced in that skill
+3. Set the `character` field in YAML frontmatter to the character name
+4. Maintain the character's voice consistently throughout all sections
+
+If no character was specified (empty string), use the default neutral observatory
+voice and set `character: null` in frontmatter.
+
 6. Compose the full markdown file content including YAML frontmatter:
 
    ```yaml
@@ -59,7 +72,7 @@ Follow those instructions exactly, with the following CI-specific adaptations:
    title: "Daily Heartbeat — {date}"
    date: {YYYY-MM-DD}
    template: default
-   character: null
+   character: null  # set to character name if --character was provided
    cadence: daily
    sources:
      koi: true
